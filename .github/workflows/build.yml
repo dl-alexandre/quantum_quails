@@ -1,0 +1,34 @@
+name: Build Arduino Sketch (Quantum Quails)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Arduino CLI
+      uses: arduino/setup-arduino-cli@v1
+
+    - name: Install platform and dependencies
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install arduino:avr
+        arduino-cli lib install \
+          "SparkFun SHTC3 Humidity and Temperature Sensor Library" \
+          "RTClib" \
+          "TaskScheduler" \
+          "Adafruit BusIO" \
+          "Adafruit Unified Sensor" \
+          "DHT sensor library"
+
+    - name: Compile sketch for Arduino Uno
+      run: |
+        arduino-cli compile \
+          --fqbn arduino:avr:uno \
+          quantum_quails
